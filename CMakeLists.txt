@@ -105,6 +105,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 # Include cross-compiler settings and warning configuration
 include(CompilerSettings)
 include(CompilerWarnings)
+include(Dependencies)
 
 # ==============================================================================
 # Output Directories
@@ -138,6 +139,8 @@ add_subdirectory(xll24)
 set(XLL_TEMPLATE_SOURCES
     xll_template.cpp
     xll_template.h
+    xll_linalg.cpp
+    xll_linalg.h
 )
 
 # For GCC/Clang, include .def file for function exports
@@ -163,6 +166,9 @@ set_project_warnings(xll_template)
 # Link against xll24 with whole-archive to include all static library symbols
 # This ensures xlAuto* functions are included even if not directly referenced
 link_whole_archive(xll_template xll24)
+
+# Link against Eigen3 (header-only library)
+target_link_libraries(xll_template PRIVATE Eigen3::Eigen)
 
 # Compile definitions
 target_compile_definitions(xll_template PRIVATE

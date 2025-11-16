@@ -14,6 +14,35 @@ EXPORTS
     xll_about
     xll_macro
 
+    ; Linear algebra functions (from xll_linalg.cpp)
+    ; Basic Operations
+    xll_matrix_add
+    xll_matrix_sub
+    xll_matrix_mul
+    xll_matrix_transpose
+    xll_matrix_trace
+    xll_matrix_norm
+    xll_matrix_det
+    xll_matrix_rank
+
+    ; Matrix Decompositions
+    xll_matrix_inv
+    xll_matrix_lu
+    xll_matrix_qr
+    xll_matrix_cholesky
+    xll_matrix_svd
+    xll_matrix_eigenvalues
+
+    ; Linear Solvers
+    xll_matrix_solve
+    xll_matrix_lstsq
+    xll_matrix_pinv
+
+    ; Utility Functions
+    xll_matrix_identity
+    xll_matrix_zeros
+    xll_matrix_diag
+
     ; xll24 library functions
     xll_evaluate
     xll_depends

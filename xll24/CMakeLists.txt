@@ -115,6 +115,12 @@ set_windows_subsystem(xll24 WINDOWS)
 # Note: WARNINGS_AS_ERRORS only for MSVC due to Excel C API legacy code patterns
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set_project_warnings(xll24 WARNINGS_AS_ERRORS)
+    # Disable specific warnings that conflict with Excel C API
+    target_compile_options(xll24 PRIVATE
+        /wd4018  # signed/unsigned mismatch
+        /wd4244  # conversion from 'type1' to 'type2', possible loss of data
+        /wd4267  # conversion from 'size_t' to 'type', possible loss of data
+    )
 else()
     set_project_warnings(xll24)
 endif()

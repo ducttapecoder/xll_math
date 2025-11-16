@@ -11,6 +11,7 @@ EXPORTS
 
     ; User functions (from xll_template.cpp)
     xll_tgamma
+    xll_about
     xll_macro
 
     ; xll24 library functions

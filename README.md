@@ -24,18 +24,17 @@ Modern C++23 Excel XLL add-in using the xll24 framework and CMake build system.
 
 ### Build with CMake
 
-```bash
+``` Powershell
 # MSVC (default)
-cmake --preset release
-cmake --build --preset release
+clear ; cmake --preset release ; cmake --build --preset release
+```
 
+```bash
 # GCC (MSYS2 UCRT64)
-cmake --preset ucrt64-release
-cmake --build --preset ucrt64-release
+clear && cmake --preset ucrt64-release && cmake --build --preset ucrt64-release
 
 # Clang (MSYS2 CLANG64)
-cmake --preset clang64-release
-cmake --build --preset clang64-release
+clear && cmake --preset clang64-release && cmake --build --preset clang64-release
 ```
 
 ### Load in Excel
@@ -100,9 +99,9 @@ double WINAPI xll_myfunction(double x)
     return x * x;
 }
 ```
-
-3. Rebuild and reload in Excel
-4. Use `=MY.FUNCTION(5)` in any cell
+3. Add function name to `xll_template.def` for GCC/Clang
+4. Rebuild and reload in Excel
+5. Use `=MY.FUNCTION(5)` in any cell
 
 See [CLAUDE.md](CLAUDE.md) for detailed development guide.
 

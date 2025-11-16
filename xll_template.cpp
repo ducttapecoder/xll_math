@@ -1,6 +1,7 @@
-﻿// xll_template.cpp - Sample xll project.
+﻿#include "xll_template.h"
+
 #include <cmath> // for double tgamma(double)
-#include "xll_template.h"
+#include <format>
 
 using namespace xll;
 
@@ -35,6 +36,83 @@ double WINAPI xll_tgamma(double x)
 #pragma XLLEXPORT // must be specified to export function
 
 	return tgamma(x);
+}
+
+// Compile-time compiler information
+namespace {
+	// Compiler name detection
+	constexpr std::string_view COMPILER_NAME =
+#if defined(_MSC_VER)
+		"MSVC"
+#elif defined(__clang__)
+		"Clang"
+#elif defined(__GNUC__)
+		"GCC"
+#else
+		"Unknown"
+#endif
+		;
+
+	// Compiler version as string
+	constexpr std::string_view COMPILER_VERSION =
+#if defined(_MSC_VER)
+		// MSVC version: _MSC_VER is defined as major*100 + minor
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+		"v" TOSTRING(_MSC_VER)
+#elif defined(__clang__)
+		__clang_version__
+#elif defined(__GNUC__)
+		__VERSION__
+#else
+		"Unknown"
+#endif
+		;
+
+	// C++ standard version
+	constexpr std::string_view CPP_STANDARD =
+#if __cplusplus >= 202600L
+		"C++26"
+#elif __cplusplus >= 202302L
+		"C++23"
+#elif __cplusplus >= 202002L
+		"C++20"
+#elif __cplusplus >= 201703L
+		"C++17"
+#elif __cplusplus >= 201402L
+		"C++14"
+#elif __cplusplus >= 201103L
+		"C++11"				
+#else
+		"C++ grandma"
+#endif
+		;
+}
+
+AddIn xai_about(
+	Function(XLL_CSTRING4, "xll_about", "XLL.ABOUT")
+	.FunctionHelp("Returns compiler and build information for this XLL add-in.")
+	.Category("XLL")
+	.Documentation(R"(
+Returns information about the compiler used to build this Excel add-in, including:
+<ul>
+<li>Compiler name and version</li>
+<li>C++ standard version</li>
+<li>Build date and time</li>
+</ul>
+All values are locked in at compile time using <code>constexpr</code>.
+)")
+);
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
+LPCSTR WINAPI xll_about()
+{
+#pragma XLLEXPORT
+	static std::string result = std::format("Compiler: {} {}\n C++ Standard: {}\n Built: {} {}", COMPILER_NAME,
+		COMPILER_VERSION, CPP_STANDARD, __DATE__, __TIME__);
+
+	return LPCSTR(result.data());
 }
 
 // Press Alt-F8 then type 'XLL.MACRO' to call 'xll_macro'

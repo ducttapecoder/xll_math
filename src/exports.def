@@ -1,4 +1,4 @@
-LIBRARY xll_template
+LIBRARY xll_math
 EXPORTS
     ; Excel XLL interface functions
     xlAutoOpen
@@ -9,12 +9,12 @@ EXPORTS
     xlAutoRegister12
     xlAddInManagerInfo12
 
-    ; User functions (from xll_template.cpp)
+    ; Core functions (from core.cpp)
     xll_tgamma
     xll_about
     xll_macro
 
-    ; Linear algebra functions (from xll_linalg.cpp)
+    ; Linear algebra functions (from linalg.cpp)
     ; Basic Operations
     xll_matrix_add
     xll_matrix_sub
@@ -31,7 +31,9 @@ EXPORTS
     xll_matrix_qr
     xll_matrix_cholesky
     xll_matrix_svd
+    xll_matrix_svd_full
     xll_matrix_eigenvalues
+    xll_matrix_eigenvectors
 
     ; Linear Solvers
     xll_matrix_solve

@@ -1,6 +1,6 @@
 ﻿#pragma once
 // ==============================================================================
-// xll_linalg.h - Linear Algebra Excel Functions using Eigen
+// linalg.h - Linear Algebra Excel Functions using Eigen
 // ==============================================================================
 // Provides matrix operations, decompositions, and solvers for Excel
 // Uses Eigen 5.0+ for high-performance linear algebra

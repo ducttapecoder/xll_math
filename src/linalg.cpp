@@ -1,11 +1,11 @@
 ﻿// ==============================================================================
-// xll_linalg.cpp - Linear Algebra Excel Functions using Eigen
+// linalg.cpp - Linear Algebra Excel Functions using Eigen
 // ==============================================================================
 // Implementation of matrix operations, decompositions, and solvers for Excel
 // Uses Eigen 5.0+ for high-performance linear algebra computations
 // ==============================================================================
 
-#include "xll_linalg.h"
+#include "linalg.h"
 
 // Suppress warnings from Eigen library headers (external code)
 #if defined(__GNUC__) && !defined(__clang__)
@@ -576,6 +576,93 @@ _FP12* WINAPI xll_matrix_svd(_FP12* pa)
 }
 
 // -----------------------------------------------------------------------------
+// MATRIX.SVD_FULL - Full SVD with U, Σ, V^T stacked vertically
+// -----------------------------------------------------------------------------
+AddIn xai_matrix_svd_full(
+    Function(XLL_FP, "xll_matrix_svd_full", "MATRIX.SVD_FULL")
+    .Arguments({
+        Arg(XLL_FP, "A", "is the matrix.")
+    })
+    .FunctionHelp("Compute full SVD decomposition with all components stacked.")
+    .Category("LINALG")
+    .Documentation(R"(
+<p>Computes singular value decomposition: \[A = U\Sigma V^T\]</p>
+<p>Returns U, Σ (as diagonal matrix), and V^T stacked vertically in one matrix.</p>
+<p><b>Input:</b> Matrix A(m×n)</p>
+<p><b>Output:</b> Stacked matrix with U (m×k), Σ (k×k), V^T (k×n) where k=min(m,n)</p>
+<p>Total dimensions: (m+k+k)×max(m,n)</p>
+)")
+);
+
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
+_FP12* WINAPI xll_matrix_svd_full(_FP12* pa)
+{
+#pragma XLLEXPORT
+    try {
+        MatrixXd A = fp_to_eigen(pa);
+
+        // Compute thin SVD
+        JacobiSVD<MatrixXd, ComputeThinU | ComputeThinV> svd(A);
+
+        MatrixXd U = svd.matrixU();          // m × k
+        VectorXd sigma = svd.singularValues(); // k × 1
+        MatrixXd V = svd.matrixV();          // n × k
+        MatrixXd Vt = V.transpose();         // k × n
+
+        int m = static_cast<int>(A.rows());
+        int n = static_cast<int>(A.cols());
+        int k = static_cast<int>(sigma.size()); // min(m,n)
+
+        // Create Σ as diagonal matrix (k×k)
+        MatrixXd Sigma = sigma.asDiagonal();
+
+        // Determine max width needed
+        int max_cols = (std::max)(m, n);
+        max_cols = (std::max)(max_cols, k);
+
+        // Total rows: m (U) + k (Σ) + k (V^T)
+        int total_rows = m + k + k;
+
+        // Create result matrix with zero padding
+        static FPX result;
+        result.resize(total_rows, max_cols);
+
+        // Initialize to zero
+        for (int i = 0; i < total_rows * max_cols; ++i) {
+            result[i] = 0.0;
+        }
+
+        // Copy U (m×k) to top section
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < k; ++j) {
+                result(i, j) = U(i, j);
+            }
+        }
+
+        // Copy Σ (k×k) to middle section
+        for (int i = 0; i < k; ++i) {
+            for (int j = 0; j < k; ++j) {
+                result(m + i, j) = Sigma(i, j);
+            }
+        }
+
+        // Copy V^T (k×n) to bottom section
+        for (int i = 0; i < k; ++i) {
+            for (int j = 0; j < n; ++j) {
+                result(m + k + i, j) = Vt(i, j);
+            }
+        }
+
+        return result.get();
+    }
+    catch (...) {
+        return nullptr;
+    }
+}
+
+// -----------------------------------------------------------------------------
 // MATRIX.EIGENVALUES - Eigenvalues
 // -----------------------------------------------------------------------------
 AddIn xai_matrix_eigenvalues(
@@ -609,6 +696,46 @@ _FP12* WINAPI xll_matrix_eigenvalues(_FP12* pa)
         EigenSolver<MatrixXd> es(A);
         VectorXd eigenvalues = es.eigenvalues().real();
         return vector_to_fp(eigenvalues);
+    }
+    catch (...) {
+        return nullptr;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// MATRIX.EIGENVECTORS - Eigenvectors
+// -----------------------------------------------------------------------------
+AddIn xai_matrix_eigenvectors(
+    Function(XLL_FP, "xll_matrix_eigenvectors", "MATRIX.EIGENVECTORS")
+    .Arguments({
+        Arg(XLL_FP, "A", "is a square matrix.")
+    })
+    .FunctionHelp("Compute eigenvectors of a square matrix.")
+    .Category("LINALG")
+    .Documentation(R"(
+<p>Computes eigenvectors satisfying: \[Av = \lambda v\]</p>
+<p>Returns matrix where each column is an eigenvector (real parts only).</p>
+<p><b>Input:</b> Square matrix A(n×n)</p>
+<p><b>Output:</b> Eigenvector matrix V(n×n) where column i corresponds to eigenvalue i</p>
+)")
+);
+
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
+_FP12* WINAPI xll_matrix_eigenvectors(_FP12* pa)
+{
+#pragma XLLEXPORT
+    try {
+        MatrixXd A = fp_to_eigen(pa);
+
+        if (A.rows() != A.cols()) {
+            return nullptr;
+        }
+
+        EigenSolver<MatrixXd> es(A);
+        MatrixXd eigenvectors = es.eigenvectors().real();
+        return eigen_to_fp(eigenvectors);
     }
     catch (...) {
         return nullptr;

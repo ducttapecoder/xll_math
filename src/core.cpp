@@ -1,4 +1,4 @@
-﻿#include "xll_template.h"
+﻿#include "core.h"
 
 #include <cmath> // for double tgamma(double)
 #include <format>
@@ -22,7 +22,7 @@ AddIn xai_tgamma(
 The <i>Gamma</i> function is \(\Gamma(x) = \int_0^\infty t^{x - 1} e^{-t}\,dt\), \(x \ge 0\).
 If \(n\) is a natural number then \(\Gamma(n + 1) = n! = n(n - 1)\cdots 1\).
 <p>
-Any valid HTML using <a href="https://katex.org/" target="_blank">KaTeX</a> can 
+Any valid HTML using <a href="https://katex.org/" target="_blank">KaTeX</a> can
 be used for documentation.
 )xyzyx")
 );
@@ -82,7 +82,7 @@ namespace {
 #elif __cplusplus >= 201402L
 		"C++14"
 #elif __cplusplus >= 201103L
-		"C++11"				
+		"C++11"
 #else
 		"C++ grandma"
 #endif

@@ -137,23 +137,29 @@ add_subdirectory(xll24)
 
 # Source files
 set(XLL_TEMPLATE_SOURCES
-    xll_template.cpp
-    xll_template.h
-    xll_linalg.cpp
-    xll_linalg.h
+    src/core.cpp
+    src/linalg.cpp
+    include/core.h
+    include/linalg.h
 )
 
 # For GCC/Clang, include .def file for function exports
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    list(APPEND XLL_TEMPLATE_SOURCES xll_template.def)
+    list(APPEND XLL_TEMPLATE_SOURCES src/exports.def)
 endif()
 
 # Create shared library (.xll)
 add_library(xll_template SHARED ${XLL_TEMPLATE_SOURCES})
 
+# Include directories
+target_include_directories(xll_template PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 # Set target properties
 set_target_properties(xll_template PROPERTIES
-    OUTPUT_NAME "xll_template"
+    OUTPUT_NAME "xll_math"
     SUFFIX ".xll"
 )
 

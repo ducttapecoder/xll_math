@@ -1,0 +1,26 @@
+{
+    "terminal.integrated.profiles.windows": {
+        "bash (UCRT64)": {
+            "path": "C:\\msys64\\usr\\bin\\bash.exe",
+            "args": [
+                "--login",
+                "-i"
+            ],
+            "env": {
+                "CHERE_INVOKING": "1",
+                "MSYSTEM": "UCRT64"
+            }
+        },
+        "bash (CLANG64)": {
+            "path": "C:\\msys64\\usr\\bin\\bash.exe",
+            "args": [
+                "--login",
+                "-i"
+            ],
+            "env": {
+                "CHERE_INVOKING": "1",
+                "MSYSTEM": "CLANG64"
+            }
+        }
+    }
+}

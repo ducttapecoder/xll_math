@@ -21,5 +21,5 @@ void DoEvents(int ms)
 			PostQuitMessage(static_cast<int>(msg.wParam)); // exits when macro is done?
 		}
 	}
-	Sleep(ms);
+	Sleep(static_cast<DWORD>(ms));
 }

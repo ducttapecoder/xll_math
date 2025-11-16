@@ -1,0 +1,28 @@
+LIBRARY xll_template
+EXPORTS
+    ; Excel XLL interface functions
+    xlAutoOpen
+    xlAutoClose
+    xlAutoAdd
+    xlAutoRemove
+    xlAutoFree12
+    xlAutoRegister12
+    xlAddInManagerInfo12
+
+    ; User functions (from xll_template.cpp)
+    xll_tgamma
+    xll_macro
+
+    ; xll24 library functions
+    xll_evaluate
+    xll_depends
+    xll_range_set
+    xll_range_get
+    xll_pasteb
+    xll_pastec
+    xll_pasted
+    xll_handle_style
+    xll_list_macro
+    xll_list
+    xll_py
+    xll_alert_level_

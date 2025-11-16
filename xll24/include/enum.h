@@ -1,6 +1,7 @@
 // enum.h - Functions used for enumerations.
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
+#include <cmath>
 #include <expected>
 #include "oper.h"
 #include "handle.h"

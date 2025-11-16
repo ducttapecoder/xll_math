@@ -25,7 +25,7 @@ xlAutoOpen(void)
 		return FALSE;
 	}
 	catch (...) {
-		XLL_ERROR(__FUNCTION__ ": unknown exception");
+		XLL_ERROR(std::string(__FUNCTION__) + ": unknown exception");
 
 		return FALSE;
 	}
@@ -49,7 +49,7 @@ xlAutoClose(void)
 		return FALSE;
 	}
 	catch (...) {
-		XLL_ERROR(__FUNCTION__ ": unknown exception");
+		XLL_ERROR(std::string(__FUNCTION__) + ": unknown exception");
 
 		return FALSE;
 	}

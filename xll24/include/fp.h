@@ -3,9 +3,11 @@
 #pragma once
 #include <algorithm>
 #include <initializer_list>
+#include <limits>
 //#include <mdspan>
 #include <span>
 #include <stdexcept>
+#include <utility>
 #include "ensure.h"
 extern "C" {
 #include "fpx.h"

@@ -1,0 +1,12 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "user-debug",
+      "inherits": "debug",
+      "cacheVariables": {
+        "CMAKE_VS_DEBUGGER_COMMAND": "C:/Program Files/Microsoft Office/root/Office16/EXCEL.EXE"
+      }
+    }
+  ]
+}

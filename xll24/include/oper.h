@@ -444,15 +444,15 @@ namespace xll {
 			return static_cast<OPER&>(value(*this, OPER(key)));
 		}
 
-		const OPER& operator[](const OPER& key) const
+		OPER operator[](const OPER& key) const
 		{
 			return value(*this, key);
 		}
-		const OPER& operator[](const std::string_view& key) const
+		OPER operator[](const std::string_view& key) const
 		{
 			return value(*this, OPER(key));
 		}
-		const OPER& operator[](const std::wstring_view& key) const
+		OPER operator[](const std::wstring_view& key) const
 		{
 			return value(*this, OPER(key));
 		}

@@ -1,6 +1,7 @@
 // py.cpp - Generate Python module using ctypes.
 // https://docs.python.org/3/library/ctypes.html
 // The macro `PY` generates a Python module for import.
+#include <filesystem>
 #include <fstream>
 #include <map>
 #include "xll.h"
@@ -77,6 +78,13 @@ OPER._fields_ = [
 
 )";
 
+// Helper macros for creating wide string literals from macro parameters
+#define STRINGIFY_IMPL(x) #x
+#define STRINGIFY(x) STRINGIFY_IMPL(x)
+#define WIDEN_IMPL(x) L##x
+#define WIDEN(x) WIDEN_IMPL(x)
+#define WSTRINGIFY(x) WIDEN(STRINGIFY(x))
+
 // Excel to Python types.
 #define PY_ARG_TYPE(X)                      \
 	X(BOOL,     A, A,  c_bool, c_bool)      \
@@ -104,10 +112,10 @@ namespace py {
 
 	// Excel to Python types.
 	inline std::map<xll::OPER, std::wstring> ctype = {
-	#define PY_ARG_CTYPE(T, A, B, C, D) { xll::OPER(L#B), L#C },
+	#define PY_ARG_CTYPE(T, A, B, C, D) { xll::OPER(WSTRINGIFY(B)), WSTRINGIFY(C) },
 		PY_ARG_TYPE(PY_ARG_CTYPE)
 	#undef PY_ARG_CTYPE
-	#define PY_ARG_CTYPE(T, A, B, C, D) { xll::OPER(L#C), L#D },
+	#define PY_ARG_CTYPE(T, A, B, C, D) { xll::OPER(WSTRINGIFY(C)), WSTRINGIFY(D) },
 		PY_ARG_TYPE(PY_ARG_CTYPE)
 	#undef PY_ARG_CTYPE
 	};
@@ -163,6 +171,9 @@ std::wstring join(const std::vector<std::wstring>& v, const std::wstring& sep = 
 }
 
 AddIn xai_py(Macro("xll_py", "PY"));
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 int WINAPI xll_py()
 {
 #pragma XLLEXPORT
@@ -173,7 +184,7 @@ int WINAPI xll_py()
 
 		std::wofstream ofs;
 
-		ofs.open(file);
+		ofs.open(std::filesystem::path(file));
 		ofs << excel_py
 		    << L"root = install_root()\n"
 			<< L"WinDLL(root + r'\\xlcall32.dll')\n"

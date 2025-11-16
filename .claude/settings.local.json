@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(test:*)",
+      "Bash(cmake:*)",
+      "Bash(/clang64/bin/clang++:*)",
+      "Bash(/c/msys64/ucrt64/bin/nm:*)",
+      "Bash(/c/Program Files/CMake/bin/cmake.exe --build:*)",
+      "Bash(C:/msys64/ucrt64/bin/g++.exe:*)",
+      "Bash(C:/msys64/ucrt64/bin/ld:*)",
+      "Bash(/c/Program Files/CMake/bin/cmake.exe:*)",
+      "Bash(/c/msys64/ucrt64/bin/g++.exe:*)",
+      "Bash(link.log:*)",
+      "Bash(echo:*)",
+      "Bash(cat:*)",
+      "Bash(/c/msys64/ucrt64/bin/dlltool --help)",
+      "Bash(/c/msys64/ucrt64/bin/dlltool:*)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

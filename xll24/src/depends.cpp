@@ -12,6 +12,9 @@ AddIn xai_depends(
 	.FunctionHelp("Return cell after dependency is called.")
 	.Category("XLL")
 );
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 LPXLOPER12 WINAPI xll_depends(LPXLOPER12 c, LPXLOPER12)
 {
 #pragma XLLEXPORT

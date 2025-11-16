@@ -11,6 +11,9 @@ AddIn xai_evaluate(
 	.FunctionHelp("Return the value of the formula.")
 	.Category("XLL")
 );
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 LPXLOPER12 WINAPI xll_evaluate(LPXLOPER12 p)
 {
 #pragma XLLEXPORT

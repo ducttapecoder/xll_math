@@ -1,0 +1,235 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {"major": 3, "minor": 28, "patch": 0},
+  "configurePresets": [
+    {
+      "name": "base-msvc-x64",
+      "hidden": true,
+      "generator": "Visual Studio 18 2026",
+      "architecture": {"value": "x64", "strategy": "set"},
+      "toolset": {"value": "v145", "strategy": "set"},
+      "cacheVariables": {"CMAKE_EXPORT_COMPILE_COMMANDS": "ON"}
+    },
+    {
+      "name": "base-msvc-x86",
+      "hidden": true,
+      "generator": "Visual Studio 18 2026",
+      "architecture": {"value": "Win32", "strategy": "set"},
+      "toolset": {"value": "v145", "strategy": "set"},
+      "cacheVariables": {"CMAKE_EXPORT_COMPILE_COMMANDS": "ON"}
+    },
+    {
+      "name": "base-ucrt64",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      },
+      "environment": {"MSYSTEM": "UCRT64"}
+    },
+    {
+      "name": "base-mingw32",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      },
+      "environment": {"MSYSTEM": "MINGW32"}
+    },
+    {
+      "name": "base-clang64",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      },
+      "environment": {"MSYSTEM": "CLANG64"}
+    },
+    {
+      "name": "base-clang32",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      },
+      "environment": {"MSYSTEM": "CLANG32"}
+    },
+    {
+      "name": "debug",
+      "displayName": "MSVC x64 Debug",
+      "inherits": "base-msvc-x64",
+      "binaryDir": "${sourceDir}/build/msvc-x64-debug",
+      "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug"}
+    },
+    {
+      "name": "release",
+      "displayName": "MSVC x64 Release",
+      "inherits": "base-msvc-x64",
+      "binaryDir": "${sourceDir}/build/msvc-x64-release",
+      "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}
+    },
+    {
+      "name": "multi",
+      "displayName": "MSVC x64 Multi-Config",
+      "inherits": "base-msvc-x64",
+      "binaryDir": "${sourceDir}/build/msvc-x64",
+      "cacheVariables": {"CMAKE_CONFIGURATION_TYPES": "Debug;Release"}
+    },
+    {
+      "name": "debug-x86",
+      "displayName": "MSVC x86 Debug",
+      "inherits": "base-msvc-x86",
+      "binaryDir": "${sourceDir}/build/msvc-x86-debug",
+      "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug"}
+    },
+    {
+      "name": "release-x86",
+      "displayName": "MSVC x86 Release",
+      "inherits": "base-msvc-x86",
+      "binaryDir": "${sourceDir}/build/msvc-x86-release",
+      "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}
+    },
+    {
+      "name": "ucrt64-debug",
+      "displayName": "GCC UCRT64 Debug",
+      "inherits": "base-ucrt64",
+      "binaryDir": "${sourceDir}/build/ucrt64-debug",
+      "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug"}
+    },
+    {
+      "name": "ucrt64-release",
+      "displayName": "GCC UCRT64 Release",
+      "inherits": "base-ucrt64",
+      "binaryDir": "${sourceDir}/build/ucrt64-release",
+      "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}
+    },
+    {
+      "name": "mingw32-debug",
+      "displayName": "GCC MinGW32 Debug",
+      "inherits": "base-mingw32",
+      "binaryDir": "${sourceDir}/build/mingw32-debug",
+      "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug"}
+    },
+    {
+      "name": "mingw32-release",
+      "displayName": "GCC MinGW32 Release",
+      "inherits": "base-mingw32",
+      "binaryDir": "${sourceDir}/build/mingw32-release",
+      "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}
+    },
+    {
+      "name": "clang64-debug",
+      "displayName": "Clang64 Debug",
+      "inherits": "base-clang64",
+      "binaryDir": "${sourceDir}/build/clang64-debug",
+      "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug"}
+    },
+    {
+      "name": "clang64-release",
+      "displayName": "Clang64 Release",
+      "inherits": "base-clang64",
+      "binaryDir": "${sourceDir}/build/clang64-release",
+      "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}
+    },
+    {
+      "name": "clang32-debug",
+      "displayName": "Clang32 Debug",
+      "inherits": "base-clang32",
+      "binaryDir": "${sourceDir}/build/clang32-debug",
+      "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug"}
+    },
+    {
+      "name": "clang32-release",
+      "displayName": "Clang32 Release",
+      "inherits": "base-clang32",
+      "binaryDir": "${sourceDir}/build/clang32-release",
+      "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug",
+      "displayName": "MSVC x64 Debug",
+      "configurePreset": "debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "release",
+      "displayName": "MSVC x64 Release",
+      "configurePreset": "release",
+      "configuration": "Release"
+    },
+    {
+      "name": "multi-debug",
+      "displayName": "MSVC x64 Multi-Config Debug",
+      "configurePreset": "multi",
+      "configuration": "Debug"
+    },
+    {
+      "name": "multi-release",
+      "displayName": "MSVC x64 Multi-Config Release",
+      "configurePreset": "multi",
+      "configuration": "Release"
+    },
+    {
+      "name": "debug-x86",
+      "displayName": "MSVC x86 Debug",
+      "configurePreset": "debug-x86",
+      "configuration": "Debug"
+    },
+    {
+      "name": "release-x86",
+      "displayName": "MSVC x86 Release",
+      "configurePreset": "release-x86",
+      "configuration": "Release"
+    },
+    {
+      "name": "ucrt64-debug",
+      "displayName": "GCC UCRT64 Debug",
+      "configurePreset": "ucrt64-debug"
+    },
+    {
+      "name": "ucrt64-release",
+      "displayName": "GCC UCRT64 Release",
+      "configurePreset": "ucrt64-release"
+    },
+    {
+      "name": "mingw32-debug",
+      "displayName": "GCC MinGW32 Debug",
+      "configurePreset": "mingw32-debug"
+    },
+    {
+      "name": "mingw32-release",
+      "displayName": "GCC MinGW32 Release",
+      "configurePreset": "mingw32-release"
+    },
+    {
+      "name": "clang64-debug",
+      "displayName": "Clang64 Debug",
+      "configurePreset": "clang64-debug"
+    },
+    {
+      "name": "clang64-release",
+      "displayName": "Clang64 Release",
+      "configurePreset": "clang64-release"
+    },
+    {
+      "name": "clang32-debug",
+      "displayName": "Clang32 Debug",
+      "configurePreset": "clang32-debug"
+    },
+    {
+      "name": "clang32-release",
+      "displayName": "Clang32 Release",
+      "configurePreset": "clang32-release"
+    }
+  ]
+}

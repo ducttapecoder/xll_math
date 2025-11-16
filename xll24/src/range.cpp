@@ -13,6 +13,9 @@ AddIn xai_range_set(
 	.Category(L"XLL")
 	.FunctionHelp(L"Return a handle to a range.")
 );
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 HANDLEX WINAPI xll_range_set(LPOPER pr)
 {
 #pragma XLLEXPORT
@@ -36,6 +39,9 @@ AddIn xai_range_get(
 	.Category(L"XLL")
 	.FunctionHelp(L"Return a range given a handle.")
 );
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 LPXLOPER12 WINAPI xll_range_get(HANDLEX h)
 {
 #pragma XLLEXPORT

@@ -2,6 +2,7 @@
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 #include <algorithm>
+#include <cmath>
 #include <map>
 #include "register.h"
 
@@ -92,7 +93,7 @@ namespace xll {
 				regid = Num(text);
 			}
 		
-			if (!isnan(regid)) {
+			if (!std::isnan(regid)) {
 				const auto i = RegIds().find(regid);
 				if (i != RegIds().end()) {
 					pargs = i->second;

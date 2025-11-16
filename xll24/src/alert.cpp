@@ -27,6 +27,9 @@ is stored at <code>HKEY_CURRENT_USER\Software\KALX\xll\xll_alert_level</code>
 in the registry to persist across Excel sessions.
 )")
 );
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 DWORD WINAPI xll_alert_level_(LPOPER plevel)
 {
 #pragma XLLEXPORT

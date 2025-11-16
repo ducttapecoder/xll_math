@@ -18,6 +18,9 @@ AddIn xai_handle_style(
 	Macro(L"xll_handle_style", L"XLL.HANDLE.STYLE")
 );
 // Add red to color palette and define Handle style.
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 int WINAPI xll_handle_style()
 {
 #pragma XLLEXPORT
@@ -103,6 +106,9 @@ OPER Set(const OPER& ref, const OPER& val)
 AddIn xai_pasteb(
 	Macro("xll_pasteb", "XLL.PASTEB")
 );
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 int WINAPI xll_pasteb()
 {
 #pragma XLLEXPORT
@@ -141,6 +147,9 @@ On<xlcOnKey> xok_pasteb(ON_CTRL ON_SHIFT "B", "XLL.PASTEB");
 AddIn xai_pastec(
 	Macro("xll_pastec", "XLL.PASTEC")
 );
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 int WINAPI xll_pastec()
 {
 #pragma XLLEXPORT
@@ -200,6 +209,9 @@ On<xlcOnKey> xok_pastec(ON_CTRL ON_SHIFT "C", "XLL.PASTEC");
 AddIn xai_pasted(
 	Macro("xll_pasted", "XLL.PASTED")
 );
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 int WINAPI xll_pasted()
 {
 #pragma XLLEXPORT
@@ -269,6 +281,9 @@ On<xlcOnKey> xok_pasted(ON_CTRL ON_SHIFT "D", "XLL.PASTED");
 
 // Get text of Listbox.
 AddIn xai_list_macro(Macro(L"xll_list_macro", L"XLL.LIST.MACRO"));
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 int WINAPI xll_list_macro()
 {
 #pragma XLLEXPORT
@@ -287,6 +302,9 @@ int WINAPI xll_list_macro()
 }
 
 AddIn xai_list(Macro(L"xll_list", L"XLL.LIST"));
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 int WINAPI xll_list()
 {
 #pragma XLLEXPORT

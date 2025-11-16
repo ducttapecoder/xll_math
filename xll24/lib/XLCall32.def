@@ -1,0 +1,6 @@
+LIBRARY XLCall32.dll
+EXPORTS
+    Excel4
+    Excel4v
+    LPenHelper
+    XLCallVer

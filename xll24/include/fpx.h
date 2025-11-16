@@ -2,7 +2,9 @@
 // Copyright (c) KALX, LLC. All rights reserved. No warranty made.
 #pragma once
 
+#ifdef _MSC_VER
 #pragma warning(push)
+#endif
 struct fpx {
 	int rows;
 	int columns;
@@ -30,3 +32,6 @@ void fpx_free(struct fpx*);
 // in-place transpose
 struct fpx* fpx_transpose(struct fpx* fpx);
 
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif

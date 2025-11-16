@@ -18,7 +18,19 @@
 #pragma once
 
 /*
-** XL 12 Basic Datatypes 
+** Calling convention definitions for cross-compiler compatibility
+**/
+#if defined(__GNUC__) || defined(__clang__)
+    #ifndef pascal
+        #define pascal __stdcall
+    #endif
+    #ifndef _cdecl
+        #define _cdecl __cdecl
+    #endif
+#endif
+
+/*
+** XL 12 Basic Datatypes
 **/
 
 typedef INT32 BOOL;			/* Boolean */

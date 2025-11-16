@@ -48,7 +48,8 @@ inline void set_alert_mask(int level)
 // Handle to Excel window.
 inline HWND xllGetHwnd(void) noexcept
 {
-	XLOPER12 xHwnd = { .xltype = xltypeNil };
+	XLOPER12 xHwnd{};
+	xHwnd.xltype = xltypeNil;
 
 	const int ret = Excel12(xlGetHwnd, &xHwnd, 0);
 	if (ret != xlretSuccess || xHwnd.xltype != xltypeInt) {

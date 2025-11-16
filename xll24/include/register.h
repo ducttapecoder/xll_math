@@ -11,10 +11,13 @@ namespace xll {
 		if (p.val.str[1] == L'_') {
 			p = OPER(p.val.str + 2, p.val.str[0] - 1);
 		}
-		// Prepend question mark for C++ name mangling.
+#ifdef _MSC_VER
+		// MSVC: Prepend question mark for C++ name mangling.
 		else if (p.val.str[1] != L'?') {
 			p = OPER(L"?") & p;
 		}
+#endif
+		// GCC/Clang: extern "C" functions have no mangling, use name as-is
 	}
 
 	// Append "!0" to url if missing.
@@ -30,7 +33,8 @@ namespace xll {
 	// https://learn.microsoft.com/en-us/office/client-developer/excel/xlfregister-form-1
 	inline OPER XlfRegister(Args* pargs)
 	{
-		XLOPER12 res = { .xltype = xltypeNil };
+		XLOPER12 res{};
+		res.xltype = xltypeNil;
 
 		pargs->moduleText = Excel(xlGetName);
 		procedure(pargs->procedure);

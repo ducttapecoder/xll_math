@@ -26,6 +26,10 @@ be used for documentation.
 )xyzyx")
 );
 // WINAPI calling convention must be specified
+// For GCC/Clang, use extern "C" to prevent name mangling
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 double WINAPI xll_tgamma(double x)
 {
 #pragma XLLEXPORT // must be specified to export function
@@ -40,6 +44,10 @@ AddIn xai_macro(
 	Macro("xll_macro", "XLL.MACRO")
 );
 // Macros must have `int WINAPI (*)(void)` signature.
+// For GCC/Clang, use extern "C" to prevent name mangling
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 int WINAPI xll_macro(void)
 {
 #pragma XLLEXPORT

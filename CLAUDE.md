@@ -192,39 +192,328 @@ int WINAPI xll_mymacro(void)
 
 Call macros from Excel: Alt+F8, type macro name, click Run.
 
-### Excel Data Types
+### Excel Data Types Reference
 
-**XLL Types** (defined in `xll24/include/type.h`):
-- `XLL_DOUBLE` - double precision floating point
-- `XLL_LPXLOPER` - OPER object (arrays, strings, ranges, etc.)
-- `XLL_CSTRING` - const wchar_t* (null-terminated Unicode string)
-- `XLL_WORD` - 16-bit unsigned integer
-- `XLL_DWORD` - 32-bit unsigned integer
-- `XLL_FP` - FP12 array structure (2D array of doubles)
-- `XLL_BOOL` - boolean value
+This section documents how to work with different Excel data types based on patterns from real-world XLL projects. All types are defined in `xll24/include/type.h`.
 
-### Working with OPER
+#### Return Type Patterns
 
-OPER wraps Excel's XLOPER12 structure:
+When you specify a return type in `Function()`, you must match it with the corresponding C++ type in your implementation:
+
+| XLL Type | C++ Return Type | Use Case | Example |
+|----------|----------------|----------|---------|
+| `XLL_DOUBLE` | `double` | Single numeric value | Simple calculations |
+| `XLL_FP` | `_FP12*` or `FP*` | 2D array of doubles | Matrices, ranges |
+| `XLL_LPXLOPER` | `LPXLOPER12` | Any Excel value | Generic return, mixed types |
+| `XLL_HANDLE` | `HANDLEX` | Handle to C++ object | Object persistence |
+| `XLL_BOOL` | `BOOL` | True/false value | Flags, conditions |
+| `XLL_CSTRING` | `const wchar_t*` | Unicode text | String results |
+| `XLL_WORD` | `WORD` | 16-bit unsigned integer | Small integers |
+| `XLL_DWORD` | `DWORD` | 32-bit unsigned integer | Large integers |
+| `XLL_LONG` | `LONG` | 32-bit signed integer | Signed integers |
+
+**Examples:**
 
 ```cpp
-// Construction
-OPER num(42.0);                    // Number
-OPER str(L"Hello");                // String
-OPER arr(2, 3);                    // 2x3 array
-OPER range = Excel(xlfActiveCell); // Get active cell
+// Return double
+AddIn xai_square(
+    Function(XLL_DOUBLE, "xll_square", "SQUARE")
+    .Arguments({Arg(XLL_DOUBLE, "x", "is a number.")})
+);
+double WINAPI xll_square(double x) {
+#pragma XLLEXPORT
+    return x * x;
+}
 
-// Access
-double value = oper.val.num;       // Number value
-const wchar_t* text = oper.val.str;// String value
+// Return array (FP12)
+AddIn xai_identity(
+    Function(XLL_FP, "xll_identity", "IDENTITY")
+    .Arguments({Arg(XLL_WORD, "n", "is matrix dimension.")})
+);
+_FP12* WINAPI xll_identity(WORD n) {
+#pragma XLLEXPORT
+    static FP result(n, n);
+    for (WORD i = 0; i < n; ++i)
+        for (WORD j = 0; j < n; ++j)
+            result(i, j) = (i == j) ? 1.0 : 0.0;
+    return result.get();
+}
 
-// Type checking
-if (oper.xltype == xltypeNum) { /* ... */ }
-if (oper.xltype == xltypeStr) { /* ... */ }
+// Return generic value (LPXLOPER12)
+AddIn xai_info(
+    Function(XLL_LPXLOPER, "xll_info", "INFO")
+);
+LPXLOPER12 WINAPI xll_info() {
+#pragma XLLEXPORT
+    static OPER result;
+    result = OPER("Version 1.0");
+    return &result;
+}
 
-// Helper functions
-double Num(const OPER& x);         // Get number value
-const wchar_t* Str(const OPER& x); // Get string value
+// Return handle to C++ object
+AddIn xai_array_set(
+    Function(XLL_HANDLE, "xll_array_set", "ARRAY.SET")
+    .Arguments({Arg(XLL_FP, "array", "is an array.")})
+);
+HANDLEX WINAPI xll_array_set(_FP12* pa) {
+#pragma XLLEXPORT
+    handle<FP12> h(new FP12(*pa));
+    return h.get();
+}
+```
+
+#### Argument Type Patterns
+
+When you specify argument types in `.Arguments()`, your function parameters must match:
+
+| XLL Type | C++ Parameter Type | Use Case | Notes |
+|----------|-------------------|----------|-------|
+| `XLL_DOUBLE` | `double` | Numeric input | Single cell or value |
+| `XLL_FP` | `_FP12*` or `const _FP12*` | Array input | Range of numbers only |
+| `XLL_LPXLOPER` | `LPXLOPER12` | Any Excel value | Generic input, check type |
+| `XLL_HANDLE` | `HANDLEX` | Object handle | From previous HANDLE return |
+| `XLL_BOOL` | `BOOL` | Boolean flag | TRUE/FALSE, 1/0 |
+| `XLL_CSTRING` | `const wchar_t*` | Unicode string | Text input |
+| `XLL_WORD` | `WORD` | Small integer | 0 to 65,535 |
+| `XLL_DWORD` | `DWORD` | Large unsigned | 0 to 4,294,967,295 |
+| `XLL_LONG` | `LONG` | Signed integer | -2,147,483,648 to 2,147,483,647 |
+
+**Examples:**
+
+```cpp
+// Multiple numeric arguments
+AddIn xai_multiply(
+    Function(XLL_DOUBLE, "xll_multiply", "MULTIPLY")
+    .Arguments({
+        Arg(XLL_DOUBLE, "x", "is first number."),
+        Arg(XLL_DOUBLE, "y", "is second number.")
+    })
+);
+double WINAPI xll_multiply(double x, double y) {
+#pragma XLLEXPORT
+    return x * y;
+}
+
+// Array argument
+AddIn xai_array_sum(
+    Function(XLL_DOUBLE, "xll_array_sum", "ARRAY.SUM")
+    .Arguments({Arg(XLL_FP, "array", "is array of numbers.")})
+);
+double WINAPI xll_array_sum(const _FP12* pa) {
+#pragma XLLEXPORT
+    double sum = 0;
+    for (int i = 0; i < pa->rows * pa->columns; ++i)
+        sum += pa->array[i];
+    return sum;
+}
+
+// Generic OPER argument
+AddIn xai_type_name(
+    Function(XLL_LPXLOPER, "xll_type_name", "TYPE.NAME")
+    .Arguments({Arg(XLL_LPXLOPER, "value", "is any value.")})
+);
+LPXLOPER12 WINAPI xll_type_name(LPXLOPER12 px) {
+#pragma XLLEXPORT
+    static OPER result;
+    switch (px->xltype) {
+        case xltypeNum: result = OPER("Number"); break;
+        case xltypeStr: result = OPER("String"); break;
+        case xltypeBool: result = OPER("Boolean"); break;
+        case xltypeErr: result = OPER("Error"); break;
+        case xltypeMulti: result = OPER("Array"); break;
+        default: result = OPER("Other"); break;
+    }
+    return &result;
+}
+
+// Handle argument - retrieve stored object
+AddIn xai_array_get(
+    Function(XLL_FP, "xll_array_get", "ARRAY.GET")
+    .Arguments({Arg(XLL_HANDLE, "handle", "is array handle.")})
+);
+_FP12* WINAPI xll_array_get(HANDLEX h) {
+#pragma XLLEXPORT
+    handle<FP12> ha(h);
+    return ha.ptr();
+}
+
+// Boolean and integer arguments
+AddIn xai_random_array(
+    Function(XLL_FP, "xll_random_array", "RANDOM.ARRAY")
+    .Arguments({
+        Arg(XLL_WORD, "rows", "is number of rows."),
+        Arg(XLL_WORD, "cols", "is number of columns."),
+        Arg(XLL_BOOL, "integers", "is flag for integer values.")
+    })
+);
+_FP12* WINAPI xll_random_array(WORD rows, WORD cols, BOOL integers) {
+#pragma XLLEXPORT
+    static FP result;
+    result.resize(rows, cols);
+    for (int i = 0; i < rows * cols; ++i) {
+        double val = (double)rand() / RAND_MAX;
+        result.array()[i] = integers ? floor(val * 100) : val;
+    }
+    return result.get();
+}
+
+// String argument
+AddIn xai_string_length(
+    Function(XLL_DOUBLE, "xll_string_length", "STRING.LENGTH")
+    .Arguments({Arg(XLL_CSTRING, "text", "is a string.")})
+);
+double WINAPI xll_string_length(const wchar_t* text) {
+#pragma XLLEXPORT
+    return static_cast<double>(wcslen(text));
+}
+```
+
+#### Working with FP12 Arrays
+
+The `_FP12` structure represents a 2D array of doubles:
+
+```cpp
+// FP12 structure (from Excel SDK)
+typedef struct _FP12 {
+    int rows;       // Number of rows
+    int columns;    // Number of columns
+    double array[1]; // First element of array (variable length)
+} FP12;
+
+// Access elements
+double value = pa->array[row * pa->columns + col];
+
+// Using FP wrapper class (recommended)
+FP matrix(3, 3);  // Create 3x3 matrix
+matrix(0, 0) = 1.0;  // Set element at row 0, col 0
+matrix(1, 2) = 5.0;  // Set element at row 1, col 2
+double val = matrix(2, 1);  // Get element at row 2, col 1
+return matrix.get();  // Returns _FP12*
+```
+
+#### Working with OPER/XLOPER12
+
+The `OPER` class wraps Excel's `XLOPER12` structure for type-safe handling:
+
+```cpp
+// Check type
+if (px->xltype == xltypeNum) {
+    double value = px->val.num;
+}
+else if (px->xltype == xltypeStr) {
+    const wchar_t* text = px->val.str;
+}
+else if (px->xltype == xltypeMulti) {
+    int rows = px->val.array.rows;
+    int cols = px->val.array.columns;
+}
+
+// XLOPER12 types (from XLCALL.H)
+// xltypeNum    - Number
+// xltypeStr    - String
+// xltypeBool   - Boolean
+// xltypeErr    - Error value
+// xltypeMulti  - Array
+// xltypeMissing - Missing argument
+// xltypeNil    - Empty cell
+// xltypeRef    - Reference
+```
+
+#### Optional Arguments
+
+Use `XLL_LPXLOPER` for optional arguments and check for `xltypeMissing`:
+
+```cpp
+AddIn xai_optional_example(
+    Function(XLL_DOUBLE, "xll_optional_example", "OPTIONAL.EXAMPLE")
+    .Arguments({
+        Arg(XLL_DOUBLE, "x", "is required value."),
+        Arg(XLL_LPXLOPER, "_y", "is optional value (default 1.0).")
+    })
+);
+double WINAPI xll_optional_example(double x, LPXLOPER12 py) {
+#pragma XLLEXPORT
+    double y = 1.0;  // Default value
+    if (py->xltype != xltypeMissing && py->xltype == xltypeNum) {
+        y = py->val.num;
+    }
+    return x * y;
+}
+```
+
+**Note:** Optional arguments conventionally have names starting with `_` (underscore).
+
+#### Handles for Object Persistence
+
+Use handles to store C++ objects between Excel function calls:
+
+```cpp
+#include "xll24/include/handle.h"
+
+// Store object
+HANDLEX WINAPI xll_create_object(double value) {
+#pragma XLLEXPORT
+    handle<MyClass> h(new MyClass(value));
+    return h.get();  // Returns handle ID
+}
+
+// Retrieve object
+double WINAPI xll_use_object(HANDLEX h) {
+#pragma XLLEXPORT
+    handle<MyClass> obj(h);
+    return obj->getValue();  // Use object
+}
+
+// Delete object (optional - handles auto-cleanup)
+BOOL WINAPI xll_delete_object(HANDLEX h) {
+#pragma XLLEXPORT
+    handle<MyClass> obj(h);
+    obj.~handle();  // Explicit cleanup
+    return TRUE;
+}
+```
+
+#### GCC/Clang Name Mangling
+
+For GCC and Clang compilers, you must prevent C++ name mangling for exported functions:
+
+```cpp
+// Add extern "C" for GCC/Clang
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
+double WINAPI xll_myfunction(double x) {
+#pragma XLLEXPORT
+    return x * x;
+}
+```
+
+This is required because Excel expects C-style function names, not C++ mangled names.
+
+#### Summary: Type Matching Rules
+
+**Critical:** The return type in `Function()` MUST match your implementation:
+
+```cpp
+// ✓ CORRECT
+Function(XLL_DOUBLE, ...)
+double WINAPI xll_func(...) { ... }
+
+// ✗ WRONG - Mismatch!
+Function(XLL_DOUBLE, ...)
+LPXLOPER12 WINAPI xll_func(...) { ... }  // Runtime error!
+```
+
+**Critical:** Argument types in `.Arguments()` MUST match parameters:
+
+```cpp
+// ✓ CORRECT
+.Arguments({Arg(XLL_DOUBLE, "x", ...)})
+double WINAPI xll_func(double x) { ... }
+
+// ✗ WRONG - Mismatch!
+.Arguments({Arg(XLL_DOUBLE, "x", ...)})
+double WINAPI xll_func(LPXLOPER12 x) { ... }  // Runtime error!
 ```
 
 ### Calling Excel Functions

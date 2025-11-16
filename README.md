@@ -80,8 +80,10 @@ Open the project folder in Visual Studio 2022:
 
 ### Adding Excel Functions
 
+#### Quick Example
+
 1. Edit `xll_template.cpp`
-2. Add function registration:
+2. Add function registration and implementation:
 
 ```cpp
 AddIn xai_myfunction(
@@ -93,17 +95,59 @@ AddIn xai_myfunction(
     .Category("MATH")
 );
 
+// For GCC/Clang compatibility
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
 double WINAPI xll_myfunction(double x)
 {
 #pragma XLLEXPORT
     return x * x;
 }
 ```
-3. Add function name to `xll_template.def` for GCC/Clang
-4. Rebuild and reload in Excel
-5. Use `=MY.FUNCTION(5)` in any cell
 
-See [CLAUDE.md](CLAUDE.md) for detailed development guide.
+3. Rebuild and reload in Excel
+4. Use `=MY.FUNCTION(5)` in any cell
+
+#### Supported Data Types
+
+The xll24 framework supports various Excel data types:
+
+**Common Types:**
+- `XLL_DOUBLE` - Double precision numbers
+- `XLL_FP` - 2D arrays of doubles (ranges)
+- `XLL_LPXLOPER` - Generic Excel values (any type)
+- `XLL_BOOL` - Boolean values
+- `XLL_CSTRING` - Unicode strings
+- `XLL_HANDLE` - Handles to C++ objects
+
+**Example with Arrays:**
+
+```cpp
+AddIn xai_array_sum(
+    Function(XLL_DOUBLE, "xll_array_sum", "ARRAY.SUM")
+    .Arguments({Arg(XLL_FP, "array", "is array of numbers.")})
+);
+
+#if defined(__GNUC__) || defined(__clang__)
+extern "C"
+#endif
+double WINAPI xll_array_sum(const _FP12* pa)
+{
+#pragma XLLEXPORT
+    double sum = 0;
+    for (int i = 0; i < pa->rows * pa->columns; ++i)
+        sum += pa->array[i];
+    return sum;
+}
+```
+
+**See [CLAUDE.md](CLAUDE.md) for:**
+- Complete type reference with examples
+- Working with arrays and matrices
+- Optional arguments
+- Object handles
+- Advanced patterns
 
 ## Project Structure
 
